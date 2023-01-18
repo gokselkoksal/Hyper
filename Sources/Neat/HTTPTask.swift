@@ -2,11 +2,10 @@ import Foundation
 import Alamofire
 
 public typealias HTTPDataResponse<T> = DataResponse<T, Error>
-public typealias HTTPDataTask<Value> = HTTPTask<DataRequest, Value>
 
-public struct HTTPTask<Request: Alamofire.Request, Value> {
+public struct HTTPTask<Value> {
 
-    public let request: Request
+    public let request: DataRequest
     
     public var response: HTTPDataResponse<Value> {
         get async {
@@ -25,10 +24,14 @@ public struct HTTPTask<Request: Alamofire.Request, Value> {
             try await result.get()
         }
     }
+    
+    public var underlyingURLRequest: URLRequest? {
+        request.convertible.urlRequest
+    }
 
     private let perform: () async -> HTTPDataResponse<Value>
 
-    public init(request: Request, perform: @escaping () async -> HTTPDataResponse<Value>) {
+    public init(request: DataRequest, perform: @escaping () async -> HTTPDataResponse<Value>) {
         self.request = request
         self.perform = perform
     }
@@ -38,20 +41,20 @@ public struct HTTPTask<Request: Alamofire.Request, Value> {
 
 public extension HTTPTask {
     
-    func map<NewValue>(_ transform: @escaping (HTTPDataResponse<Value>) -> HTTPDataResponse<NewValue>) -> HTTPTask<Request, NewValue> {
-        HTTPTask<Request, NewValue>(request: request) {
+    func map<NewValue>(_ transform: @escaping (HTTPDataResponse<Value>) -> HTTPDataResponse<NewValue>) -> HTTPTask<NewValue> {
+        HTTPTask<NewValue>(request: request) {
             transform(await response)
         }
     }
     
-    func mapValue<NewValue>(_ transform: @escaping (Value) -> NewValue) -> HTTPTask<Request, NewValue> {
-        HTTPTask<Request, NewValue>(request: request) {
+    func mapValue<NewValue>(_ transform: @escaping (Value) -> NewValue) -> HTTPTask<NewValue> {
+        HTTPTask<NewValue>(request: request) {
             await perform().map(transform)
         }
     }
 
-    func decoding<NewValue>(with transform: Transform<HTTPDataResponse<Value>, HTTPDataResponse<NewValue>>) -> HTTPTask<Request, NewValue> {
-        HTTPTask<Request, NewValue>(request: request) {
+    func decoding<NewValue>(with transform: Transform<HTTPDataResponse<Value>, HTTPDataResponse<NewValue>>) -> HTTPTask<NewValue> {
+        HTTPTask<NewValue>(request: request) {
             let response = await perform()
             do {
                 return try transform.apply(response)
@@ -68,8 +71,8 @@ public extension HTTPTask {
         }
     }
 
-    func decodingValue<NewValue>(with transform: Transform<Value, NewValue>) -> HTTPTask<Request, NewValue> {
-        HTTPTask<Request, NewValue>(request: request) {
+    func decodingValue<NewValue>(with transform: Transform<Value, NewValue>) -> HTTPTask<NewValue> {
+        HTTPTask<NewValue>(request: request) {
             await perform().tryMap(transform.apply)
         }
     }
@@ -77,14 +80,7 @@ public extension HTTPTask {
 
 public extension HTTPTask where Value == Data {
     
-    func decodingValue<T: Decodable>(as type: T.Type = T.self, decoder: JSONDecoder = JSONDecoder()) -> HTTPTask<Request, T> {
+    func decodingValue<T: Decodable>(as type: T.Type = T.self, decoder: JSONDecoder = JSONDecoder()) -> HTTPTask<T> {
         decodingValue(with: .decodableTransform(using: decoder))
-    }
-}
-
-public extension HTTPTask where Request == DataRequest {
-    
-    var underlyingURLRequest: URLRequest? {
-        request.convertible.urlRequest
     }
 }

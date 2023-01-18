@@ -30,17 +30,17 @@ extension URL.Path {
 
 extension BlogAPI {
     
-    func blogPost(id: Int) -> HTTPDataTask<BlogPost> {
+    func blogPost(id: Int) -> HTTPTask<BlogPost> {
         request(path: .posts(id: id), method: .get)
             .decodingValue(as: BlogPost.self)
     }
     
-    func blogPosts() -> HTTPDataTask<[BlogPost]> {
+    func blogPosts() -> HTTPTask<[BlogPost]> {
         request(path: .posts, method: .get)
             .decodingValue(as: [BlogPost].self)
     }
 
-    func createBlogPost(title: String?, body: String?, userID: Int) -> HTTPDataTask<BlogPost> {
+    func createBlogPost(title: String?, body: String?, userID: Int) -> HTTPTask<BlogPost> {
         request(
             path: .posts,
             method: .post,
@@ -48,7 +48,7 @@ extension BlogAPI {
         ).decodingValue()
     }
 
-    func updateBlogPost(id: Int, title: String?, body: String?, userID: Int) -> HTTPDataTask<BlogPost> {
+    func updateBlogPost(id: Int, title: String?, body: String?, userID: Int) -> HTTPTask<BlogPost> {
         request(
             path: .posts(id: id),
             method: .put,
@@ -56,7 +56,7 @@ extension BlogAPI {
         ).decodingValue()
     }
 
-    func comments(forBlogPostID id: Int) -> HTTPDataTask<[Comment]> {
+    func comments(forBlogPostID id: Int) -> HTTPTask<[Comment]> {
         request(path: .posts(id: id), method: .get).decodingValue()
     }
 }

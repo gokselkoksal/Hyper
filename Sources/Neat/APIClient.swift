@@ -17,7 +17,7 @@ public extension APIClient {
         headers: HTTPHeaders? = nil,
         interceptor: RequestInterceptor? = nil,
         requestModifier: Session.RequestModifier? = nil
-    ) -> HTTPDataTask<Data> {
+    ) -> HTTPTask<Data> {
         let url = URL(baseURL: baseURL(), path: path.rawValue)
         var allHeaders = defaultHeaders()
         headers?.forEach({ allHeaders.add($0) })
@@ -30,7 +30,7 @@ public extension APIClient {
             interceptor: interceptor,
             requestModifier: requestModifier
         )
-        return HTTPDataTask<Data>(request: request) { [loader] in
+        return HTTPTask<Data>(request: request) { [loader] in
             await loader.load(request)
         }
     }
