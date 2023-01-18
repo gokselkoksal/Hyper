@@ -17,17 +17,6 @@ final class BlogAPI: APIClient {
     }
 }
 
-extension URL.Path {
-
-    static var posts: Self {
-        "posts"
-    }
-    
-    static func posts(id: Int) -> Self {
-        URL.Path(rawValue: "posts/\(id)")
-    }
-}
-
 extension BlogAPI {
     
     func blogPost(id: Int) -> HTTPTask<BlogPost> {
@@ -76,4 +65,15 @@ struct Comment: Decodable {
     let name: String?
     let email: String
     let body: String?
+}
+
+extension URL.Path {
+
+    static var posts: Self {
+        "posts"
+    }
+    
+    static func posts(id: Int) -> Self {
+        URL.Path(rawValue: "posts/\(id)")
+    }
 }
