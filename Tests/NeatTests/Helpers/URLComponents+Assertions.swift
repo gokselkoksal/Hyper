@@ -38,6 +38,7 @@ extension URLComponents {
                             file: file,
                             line: line
                         )
+                        break
                     }
                 }
             }
