@@ -29,9 +29,8 @@ extension URLRequest {
         }
     }
     
-    func assertComponents(
-        scheme: String = "https",
-        host: String? = nil,
+    func assertContentsEqualTo(
+        baseURL: URL,
         path: URL.Path,
         method: String? = nil,
         headers: [String : String]? = nil,
@@ -39,8 +38,9 @@ extension URLRequest {
         file: StaticString = #file,
         line: UInt = #line
     ) throws {
-        let urlComponents = try XCTUnwrap(url?.components)
-        urlComponents.assertHost(host, file: file, line: line)
+        let urlComponents = try XCTUnwrap(url?.components, file: file, line: line)
+        urlComponents.assertScheme(baseURL.scheme, file: file, line: line)
+        urlComponents.assertHost(baseURL.host, file: file, line: line)
         urlComponents.assertPath(path.rawValue, file: file, line: line)
         urlComponents.assertQueryItems(queryItems, file: file, line: line)
         assertMethod(method, file: file, line: line)

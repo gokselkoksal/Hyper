@@ -13,8 +13,8 @@ final class NeatTests: XCTestCase {
     func test_blogPost() throws {
         let task = api.blogPost(id: 12)
         let request = try XCTUnwrap(task.underlyingURLRequest)
-        try request.assertComponents(
-            host: "jsonplaceholder.typicode.com",
+        try request.assertContentsEqualTo(
+            baseURL: .jsonPlaceholderAPI,
             path: "posts/12",
             method: "GET",
             headers: ["Content-Type": "application/json; charset=UTF-8"],
@@ -31,8 +31,8 @@ final class NeatTests: XCTestCase {
         )
         let task = api.createBlogPost(title: post.title, body: post.body, userID: post.userID)
         let request = try XCTUnwrap(task.underlyingURLRequest)
-        try request.assertComponents(
-            host: "jsonplaceholder.typicode.com",
+        try request.assertContentsEqualTo(
+            baseURL: .jsonPlaceholderAPI,
             path: .posts,
             method: "POST",
             headers: ["Content-Type": "application/json; charset=UTF-8"]
@@ -45,11 +45,11 @@ final class NeatTests: XCTestCase {
     }
     
     func test_updateBlogPost() throws {
-        let post = (id: 1, title: "Schildler's List", body: "Masterpiece", userID: 1)
+        let post = (id: 1, title: "Schindler's List", body: "Masterpiece", userID: 1)
         let task = api.updateBlogPost(id: post.id, title: post.title, body: post.body, userID: post.userID)
         let request = try XCTUnwrap(task.underlyingURLRequest)
-        try request.assertComponents(
-            host: "jsonplaceholder.typicode.com",
+        try request.assertContentsEqualTo(
+            baseURL: .jsonPlaceholderAPI,
             path: .posts(id: post.id),
             method: "PUT",
             headers: ["Content-Type": "application/json; charset=UTF-8"]
@@ -60,6 +60,19 @@ final class NeatTests: XCTestCase {
             XCTAssertEqual(body["body"] as? String, post.body)
             XCTAssertEqual(body["userId"] as? Int, post.userID)
         }
+    }
+    
+    func test_comments() throws {
+        let task = api.comments(forBlogPostID: 1)
+        let request = try XCTUnwrap(task.underlyingURLRequest)
+        try request.assertContentsEqualTo(
+            baseURL: .jsonPlaceholderAPI,
+            path: .comments,
+            method: "GET",
+            headers: ["Content-Type": "application/json; charset=UTF-8"],
+            queryItems: [URLQueryItem(name: "postId", value: "1")]
+        )
+        request.assertBodyIsEmpty()
     }
 }
 

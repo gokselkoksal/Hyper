@@ -46,7 +46,11 @@ extension BlogAPI {
     }
 
     func comments(forBlogPostID id: Int) -> HTTPTask<[Comment]> {
-        request(path: .posts(id: id), method: .get).decodingValue()
+        request(
+            path: .comments,
+            method: .get,
+            parameters: .urlEncoded(["postId": id])
+        ).decodingValue()
     }
 }
 
@@ -75,5 +79,15 @@ extension URL.Path {
     
     static func posts(id: Int) -> Self {
         URL.Path(rawValue: "posts/\(id)")
+    }
+            
+    static var comments: Self {
+        "comments"
+    }
+}
+
+extension URL {
+    static var jsonPlaceholderAPI: URL {
+        URL(string: "https://jsonplaceholder.typicode.com")!
     }
 }
