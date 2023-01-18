@@ -4,13 +4,13 @@ import Neat
 
 extension URLRequest {
     
-    func verifyBody<Contents>(transform: (Data) throws -> Contents, verify: (_ body: Contents) throws -> Void) throws {
-        let contents = try XCTUnwrap(try httpBody.map(transform))
+    func verifyBody<Contents>(transform: (Data) throws -> Contents, verify: (_ body: Contents) throws -> Void, file: StaticString = #file, line: UInt = #line) throws {
+        let contents = try XCTUnwrap(try httpBody.map(transform), file: file, line: line)
         try verify(contents)
     }
     
-    func verifyBody<T>(as transform: BodyTransform<T>, verify: (_ body: T) throws -> Void) throws {
-        try verifyBody(transform: transform.apply(to:), verify: verify)
+    func verifyBody<T>(as transform: BodyTransform<T>, verify: (_ body: T) throws -> Void, file: StaticString = #file, line: UInt = #line) throws {
+        try verifyBody(transform: transform.apply(to:), verify: verify, file: file, line: line)
     }
     
     func assertBodyIsEmpty() {

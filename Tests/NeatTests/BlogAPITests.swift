@@ -75,22 +75,3 @@ final class NeatTests: XCTestCase {
         request.assertBodyIsEmpty()
     }
 }
-
-final class DummyRequestLoader: HTTPRequestLoader {
-    
-    func canLoad(_ request: DataRequest) -> Bool {
-        return true
-    }
-    
-    func load(_ request: DataRequest) async -> HTTPDataResponse<Data> {
-        let data = Data()
-        return DataResponse(
-            request: request.request,
-            response: nil,
-            data: data,
-            metrics: nil,
-            serializationDuration: 0,
-            result: .success(data)
-        )
-    }
-}

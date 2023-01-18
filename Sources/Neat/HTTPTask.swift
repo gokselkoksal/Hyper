@@ -1,13 +1,11 @@
 import Foundation
 import Alamofire
 
-public typealias HTTPDataResponse<T> = DataResponse<T, Error>
-
 public struct HTTPTask<Value> {
 
     public let request: DataRequest
     
-    public var response: HTTPDataResponse<Value> {
+    public var response: DataResponse<Value, Error> {
         get async {
             await perform()
         }
@@ -29,9 +27,9 @@ public struct HTTPTask<Value> {
         request.convertible.urlRequest
     }
 
-    private let perform: () async -> HTTPDataResponse<Value>
+    private let perform: () async -> DataResponse<Value, Error>
 
-    public init(request: DataRequest, perform: @escaping () async -> HTTPDataResponse<Value>) {
+    public init(request: DataRequest, perform: @escaping () async -> DataResponse<Value, Error>) {
         self.request = request
         self.perform = perform
     }
@@ -41,7 +39,7 @@ public struct HTTPTask<Value> {
 
 public extension HTTPTask {
     
-    func map<NewValue>(_ transform: @escaping (HTTPDataResponse<Value>) -> HTTPDataResponse<NewValue>) -> HTTPTask<NewValue> {
+    func map<NewValue>(_ transform: @escaping (DataResponse<Value, Error>) -> DataResponse<NewValue, Error>) -> HTTPTask<NewValue> {
         HTTPTask<NewValue>(request: request) {
             transform(await response)
         }
@@ -53,13 +51,13 @@ public extension HTTPTask {
         }
     }
 
-    func decoding<NewValue>(with transform: Transform<HTTPDataResponse<Value>, HTTPDataResponse<NewValue>>) -> HTTPTask<NewValue> {
+    func decoding<NewValue>(with transform: Transform<DataResponse<Value, Error>, DataResponse<NewValue, Error>>) -> HTTPTask<NewValue> {
         HTTPTask<NewValue>(request: request) {
             let response = await perform()
             do {
                 return try transform.apply(response)
             } catch {
-                return HTTPDataResponse<NewValue>(
+                return DataResponse<NewValue, Error>(
                     request: response.request,
                     response: response.response,
                     data: response.data,
