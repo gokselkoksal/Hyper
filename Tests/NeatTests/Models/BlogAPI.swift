@@ -56,20 +56,22 @@ extension BlogAPI {
 
 // MARK: Models
 
-struct BlogPost: Decodable, Equatable {
+struct BlogPost: Codable, Equatable {
     let id: Int
     let userId: Int
     let title: String?
     let body: String?
 }
 
-struct Comment: Decodable {
+struct Comment: Codable {
     let id: Int
     let postId: Int
     let name: String?
     let email: String
     let body: String?
 }
+
+// MARK: - Helpers
 
 extension URL.Path {
 
