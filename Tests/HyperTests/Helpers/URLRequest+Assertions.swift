@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-import Neat
+import Hyper
 
 extension URL {
     var components: URLComponents? {

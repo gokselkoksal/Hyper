@@ -1,5 +1,5 @@
 import XCTest
-import Neat
+import Hyper
 
 final class BlogAPIStubTests: XCTestCase {
     

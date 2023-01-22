@@ -1,8 +1,8 @@
 import XCTest
 import Alamofire
-@testable import Neat
+@testable import Hyper
 
-final class NeatTests: XCTestCase {
+final class BlogAPITests: XCTestCase {
     
     private var api: BlogAPI!
     

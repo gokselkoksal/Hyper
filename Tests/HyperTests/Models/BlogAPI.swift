@@ -1,6 +1,6 @@
 import Foundation
 import Alamofire
-import Neat
+import Hyper
 
 final class BlogAPI: APIClient {
     
