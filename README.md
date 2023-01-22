@@ -58,6 +58,8 @@ let api = BlogAPI(requestLoader: AlamofireRequestLoader())
 let blogPost = try await api.blogPost(id: 1).value
 ```
 
+[See the full `BlogAPI` definition here.](/Tests/HyperTests/Models/BlogAPI.swift)
+
 ## Stubbing
 Hyper comes packed with powerful stubbing capabilities. Any network request can be mocked using a stubbed request loader.
 
@@ -92,12 +94,9 @@ XCTAssertEqual(blogPost.title, "Fake post title")
 XCTAssertEqual(blogPost.body, "Fake post body")
 ```
 
-## Advanced Usage
+## Core Features
 * [Manual Response Scheduling in Tests](./Docs/Advanced.md#manual-response-scheduling): Lets you control when a request should be responded to in tests to be able to test intermediate state.
 * [Request Loader Chain](./Docs/Advanced.md#request-loader-chain): Allows you to use multiple loaders to handle a group of requests differently.
-* Request Modifiers: _Docs in progress..._
-* Response Modifiers: _Docs in progress..._
-* Request Retrier: _Docs in progress..._
 * Custom Response Decoding: _Docs in progress..._
 
 ## Inspiration
