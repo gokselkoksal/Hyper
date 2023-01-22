@@ -14,8 +14,24 @@ public extension URL {
             self.init(rawValue: value)
         }
         
-        public static func path(_ components: String...) -> Path {
-            Path(rawValue: components.joined(separator: "/"))
+        public static func path(_ components: URLPathValueConvertible...) -> Path {
+            Path(rawValue: components.map({ $0.pathValue }).joined(separator: "/"))
         }
+    }
+}
+
+public protocol URLPathValueConvertible {
+    var pathValue: String { get }
+}
+ 
+extension String: URLPathValueConvertible {
+    public var pathValue: String {
+        self
+    }
+}
+
+extension Int: URLPathValueConvertible {
+     public var pathValue: String {
+        String(describing: self)
     }
 }

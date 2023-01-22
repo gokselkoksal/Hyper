@@ -80,7 +80,7 @@ extension URL.Path {
     }
     
     static func posts(id: Int) -> Self {
-        URL.Path(rawValue: "posts/\(id)")
+        .path("posts", id)
     }
             
     static var comments: Self {
