@@ -3,7 +3,7 @@
 ### What is Hyper? 🧱
 
 Hyper is a network abstraction layer powered by Alamofire. It provides convenience helpers to...
-* create HTTP clients and define endpoints 📚
+* create HTTP clients and define endpoints using structured concurrency 📚
 * provide stubbed responses to HTTP requests 🧪
 
 ## Basic Usage
