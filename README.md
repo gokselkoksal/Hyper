@@ -2,10 +2,9 @@
 
 ### What is Hyper? 🧱
 
-Hyper is a network abstraction layer which allows building APIs conveniently. It provides a thin layer of models, interfaces and helpers to guide you through...
-* creating an API and implementing its endpoints 📚
-* providing validation, decoding and retry logic 🧑‍🔧
-* and stubbing when necessary 🧪
+Hyper is a network abstraction layer powered by Alamofire. It provides convenience helpers to...
+* create HTTP clients and define endpoints 📚
+* provide stubbed responses to HTTP requests 🧪
 
 ## Basic Usage
 Let's say we have an endpoint like below to fetch a post from my blog.
@@ -48,25 +47,15 @@ struct BlogPost: Decodable, Equatable {
 extension BlogAPI {
 
   func blogPost(id: Int) -> HTTPTask<BlogPost> {
-    buildTask(with: .jsonDecoder()) { task in
-      task.request.method = .get
-      task.request.path = .init("posts", "\(id)")
-    }
+    task(path: .posts(id: id), method: .get)
+        .decodingValue(as: BlogPost.self)
   }
 }
 ```
 Then we would consume it like below.
 ```swift
-let api = BlogAPI(taskLoader: HTTPTaskLoader(requestLoaders: [.live()])
-
-cancellables += api.blogPost(id: 1).start { response in
-  switch response.result {
-  case .success(let post):
-    print("Fetch successful! Post: \(post)")
-  case .failure(let error):
-    print("Fetch failed! Error: \(error)")
-  }
-}
+let api = BlogAPI(requestLoader: HTTPRequestLoader(requestLoaders: AlamofireRequestLoader())
+let blogPost = try await api.blogPost(id: 1).value
 ```
 
 ## Stubbing
@@ -76,38 +65,32 @@ Let's say we want to mock `/posts/<id>` endpoint with the payload below.
 ```json
 {
   "userId": 1,
-  "id": 1,
-  "title": "Mock post title",
-  "body": "Mock post body"
+  "id": 10,
+  "title": "Fake post title",
+  "body": "Fake post body"
 }
 ```
 We would first create the API with a stubbed request loader.
 ```swift
-let stubProvider = HTTPStubProvider.local()
-let api = BlogAPI.stubbed(provider: stubProvider)
+let stubProvider = InMemoryStubProvider()
+let api = BlogAPI(loader: StubbedRequestLoader(provider: stubProvider))
 ```
 We would then add a stub for the request we would like to mock.
 ```swift
-let task = api.blogPost(id: 1)
-try stubProvider.addStub(
+stubProvider.addStub(
   .success(body: .resource(name: "post", extension: "json", bundle: .module)),
-  for: .request(task.request)
+  for: .path(equals: "posts/1")
 )
 ```
 Now start the task as usual and run assertions.
 ```swift
-// when the request is started:
-var actualResponse: HTTPResponse<Post>?
-cancellables += task.start { actualResponse = $0 }
+let blogPost = try await api.blogPost(id: 1).value
 
-// then expect to receive the mocked post:
-let expectedPost = try XCTUnwrap(actualResponse).result.get()
-XCTAssertEqual(expectedPost.id, 1)
-XCTAssertEqual(expectedPost.userId, 1)
-XCTAssertEqual(expectedPost.title, "Mock post title")
-XCTAssertEqual(expectedPost.body, "Mock post body")
+XCTAssertEqual(blogPost.id, 1)
+XCTAssertEqual(blogPost.userId, 10)
+XCTAssertEqual(blogPost.title, "Fake post title")
+XCTAssertEqual(blogPost.body, "Fake post body")
 ```
-**Note that this test runs synchronously as we provided a stubbed request loader!** :zap:
 
 ## Advanced Usage
 * [Manual Response Scheduling in Tests](./Docs/Advanced.md#manual-response-scheduling): Lets you control when a request should be responded to in tests to be able to test intermediate state.
