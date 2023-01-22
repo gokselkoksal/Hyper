@@ -54,7 +54,7 @@ extension BlogAPI {
 ```
 Then we would consume it like below.
 ```swift
-let api = BlogAPI(requestLoader: HTTPRequestLoader(requestLoaders: AlamofireRequestLoader())
+let api = BlogAPI(requestLoader: AlamofireRequestLoader())
 let blogPost = try await api.blogPost(id: 1).value
 ```
 
