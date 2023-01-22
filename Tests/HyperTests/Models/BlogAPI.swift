@@ -34,7 +34,7 @@ extension BlogAPI {
             path: .posts,
             method: .post,
             parameters: .jsonEncoded(["title": title, "body": body, "userId": userID])
-        ).decodingValue()
+        ).decodingValue(as: BlogPost.self)
     }
 
     func updateBlogPost(id: Int, title: String?, body: String?, userID: Int) -> HTTPTask<BlogPost> {
@@ -42,7 +42,7 @@ extension BlogAPI {
             path: .posts(id: id),
             method: .put,
             parameters: .jsonEncoded(["id": id, "title": title, "body": body, "userId": userID])
-        ).decodingValue()
+        ).decodingValue(as: BlogPost.self)
     }
 
     func comments(forBlogPostID id: Int) -> HTTPTask<[Comment]> {
@@ -50,7 +50,7 @@ extension BlogAPI {
             path: .comments,
             method: .get,
             parameters: .urlEncoded(["postId": id])
-        ).decodingValue()
+        ).decodingValue(as: [Comment].self)
     }
 }
 

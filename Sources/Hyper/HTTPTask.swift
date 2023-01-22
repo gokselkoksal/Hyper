@@ -78,7 +78,7 @@ public extension HTTPTask {
 
 public extension HTTPTask where Value == Data {
     
-    func decodingValue<T: Decodable>(as type: T.Type = T.self, decoder: JSONDecoder = JSONDecoder()) -> HTTPTask<T> {
+    func decodingValue<T: Decodable>(as type: T.Type, decoder: JSONDecoder = JSONDecoder()) -> HTTPTask<T> {
         decodingValue(with: .decodableTransform(using: decoder))
     }
 }
