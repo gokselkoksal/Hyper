@@ -20,17 +20,17 @@ final class BlogAPI: APIClient {
 extension BlogAPI {
     
     func blogPost(id: Int) -> HTTPTask<BlogPost> {
-        httpTask(path: .posts(id: id), method: .get)
+        task(path: .posts(id: id), method: .get)
             .decodingValue(as: BlogPost.self)
     }
     
     func blogPosts() -> HTTPTask<[BlogPost]> {
-        httpTask(path: .posts, method: .get)
+        task(path: .posts, method: .get)
             .decodingValue(as: [BlogPost].self)
     }
 
     func createBlogPost(title: String?, body: String?, userID: Int) -> HTTPTask<BlogPost> {
-        httpTask(
+        task(
             path: .posts,
             method: .post,
             parameters: .jsonEncoded(["title": title, "body": body, "userId": userID])
@@ -38,7 +38,7 @@ extension BlogAPI {
     }
 
     func updateBlogPost(id: Int, title: String?, body: String?, userID: Int) -> HTTPTask<BlogPost> {
-        httpTask(
+        task(
             path: .posts(id: id),
             method: .put,
             parameters: .jsonEncoded(["id": id, "title": title, "body": body, "userId": userID])
@@ -46,7 +46,7 @@ extension BlogAPI {
     }
 
     func comments(forBlogPostID id: Int) -> HTTPTask<[Comment]> {
-        httpTask(
+        task(
             path: .comments,
             method: .get,
             parameters: .urlEncoded(["postId": id])

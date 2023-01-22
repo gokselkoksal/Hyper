@@ -24,7 +24,7 @@ public extension APIClient {
         return mergedHeaders
     }
     
-    func httpTask(
+    func task(
         request: DataRequest
     ) -> HTTPTask<Data> {
         return HTTPTask(request: request) {
@@ -32,15 +32,15 @@ public extension APIClient {
         }
     }
     
-    func httpTask(
+    func task(
         urlRequest: URLRequest,
         interceptor: RequestInterceptor? = nil
     ) -> HTTPTask<Data> {
         let request = session.request(urlRequest, interceptor: interceptor)
-        return httpTask(request: request)
+        return task(request: request)
     }
     
-    func httpTask(
+    func task(
         path: URL.Path,
         method: HTTPMethod,
         parameters: HTTPRequestParameters? = nil,
@@ -57,6 +57,6 @@ public extension APIClient {
             interceptor: interceptor,
             requestModifier: requestModifier
         )
-        return httpTask(request: request)
+        return task(request: request)
     }
 }
