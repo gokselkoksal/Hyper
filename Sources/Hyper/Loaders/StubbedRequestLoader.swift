@@ -5,18 +5,51 @@ import Alamofire
 /// given request.
 public final class StubbedRequestLoader: HTTPRequestLoader {
     
-    public let provider: HTTPStubProvider
+    /// Thrown when stubbing is not enabled but `load` is called anyway.
+    public struct NotEnabledError: LocalizedError {
+        public var errorDescription: String? {
+            "Stubbing is not enabled."
+        }
+    }
     
-    public init(provider: HTTPStubProvider) {
+    public struct Options {
+        
+        /// True if stub provider is enabled.
+        public var isEnabled: Bool
+        
+        /// Artificial delay to apply before responding to a request. Defaults to nil, which results in no delay.
+        public var responseDelay: TimeInterval?
+        
+        public init(isEnabled: Bool = true, responseDelay: TimeInterval? = nil) {
+            self.isEnabled = isEnabled
+            self.responseDelay = responseDelay
+        }
+    }
+    
+    public let provider: HTTPStubProvider
+    public var options: Options
+    
+    public init(provider: HTTPStubProvider, options: Options = Options()) {
         self.provider = provider
+        self.options = options
     }
     
     public func canRespond(to request: DataRequest) -> Bool {
-        guard let urlRequest = request.convertible.urlRequest else { return false }
+        guard options.isEnabled, let urlRequest = request.convertible.urlRequest else { return false }
         return provider.hasStub(for: urlRequest)
     }
     
     public func load(_ request: DataRequest) async -> DataResponse<Data, Error> {
+        guard options.isEnabled else {
+            return DataResponse.failure(request: nil, error: NotEnabledError())
+        }
+        if let responseDelay = options.responseDelay {
+            do {
+                try await Task.sleep(seconds: responseDelay)
+            } catch {
+                return DataResponse.failure(request: nil, error: error)
+            }
+        }
         let urlRequest: URLRequest
         do {
             urlRequest = try request.convertible.asURLRequest()
@@ -33,7 +66,7 @@ public final class StubbedRequestLoader: HTTPRequestLoader {
     }
 }
 
-extension DataResponse {
+private extension DataResponse {
     
     static func failure(
         request: URLRequest?,
@@ -53,7 +86,7 @@ extension DataResponse {
     }
 }
 
-extension DataResponse where Success == Data, Failure == Error {
+private extension DataResponse where Success == Data, Failure == Error {
     
     static func stub(
         request: URLRequest,
@@ -74,5 +107,13 @@ extension DataResponse where Success == Data, Failure == Error {
             serializationDuration: 0,
             result: response.result
         )
+    }
+}
+
+private extension Task where Success == Never, Failure == Never {
+    
+    static func sleep(seconds: TimeInterval) async throws {
+        let nanoseconds = seconds * TimeInterval(NSEC_PER_SEC)
+        try await Self.sleep(nanoseconds: UInt64(nanoseconds))
     }
 }
