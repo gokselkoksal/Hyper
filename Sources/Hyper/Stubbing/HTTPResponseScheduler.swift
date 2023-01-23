@@ -17,32 +17,6 @@ public final class ImmediateResponseScheduler: HTTPResponseScheduler {
     }
 }
 
-// MARK: - Suspended
-
-/// Does not schedule the response unless `resume()` is called.
-public final class SuspendedResponseScheduler: HTTPResponseScheduler {
-    
-    private var completions: [() -> Void] = []
-    
-    public init() { }
-    
-    public func schedule(_ work: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
-        let response = await work()
-        return await withCheckedContinuation { contination in
-            self.completions.append {
-                contination.resume(returning: response)
-            }
-        }
-    }
-    
-    public func resume() {
-        while completions.count > 0 {
-            let completion = completions.removeFirst()
-            completion()
-        }
-    }
-}
-
 // MARK: - Delayed
 
 /// Schedules the response with some delay.
