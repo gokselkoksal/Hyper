@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 
 public protocol HTTPResponseScheduler {
-    func schedule(_ responseClosure: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error>
+    func schedule(_ work: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error>
 }
 
 // MARK: - Immediate
@@ -12,8 +12,8 @@ public final class ImmediateResponseScheduler: HTTPResponseScheduler {
     
     public init() { }
     
-    public func schedule(_ responseClosure: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
-        await responseClosure()
+    public func schedule(_ work: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
+        await work()
     }
 }
 
@@ -26,8 +26,8 @@ public final class SuspendedResponseScheduler: HTTPResponseScheduler {
     
     public init() { }
     
-    public func schedule(_ responseClosure: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
-        let response = await responseClosure()
+    public func schedule(_ work: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
+        let response = await work()
         return await withCheckedContinuation { contination in
             self.completions.append {
                 contination.resume(returning: response)
@@ -54,7 +54,7 @@ public final class DelayedResponseScheduler: HTTPResponseScheduler {
         self.delay = delay
     }
     
-    public func schedule(_ responseClosure: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
+    public func schedule(_ work: () async -> DataResponse<Data, Error>) async -> DataResponse<Data, Error> {
         if let delay {
             do {
                 try await Task.sleep(seconds: delay)
@@ -62,7 +62,7 @@ public final class DelayedResponseScheduler: HTTPResponseScheduler {
                 return DataResponse.failure(request: nil, error: error)
             }
         }
-        return await responseClosure()
+        return await work()
     }
 }
 
