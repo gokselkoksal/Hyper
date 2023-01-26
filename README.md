@@ -95,9 +95,9 @@ XCTAssertEqual(blogPost.body, "Fake post body")
 ```
 
 ## Core Features
+* [Verifying Request Construction](Docs/VerifyingRequestConstruction.md): Using `HTTPTask`s, it's easy to verify underlying `URLRequest` for each endpoint.
 * [Manual Response Scheduling in Tests](./Docs/Advanced.md#manual-response-scheduling): Lets you control when a request should be responded to in tests to be able to test intermediate state.
 * [Request Loader Chain](./Docs/Advanced.md#request-loader-chain): Allows you to use multiple loaders to handle a group of requests differently.
-* Custom Response Decoding: _Docs in progress..._
 
 ## Inspiration
 * [HTTP in Swift](https://davedelong.com/blog/2020/06/27/http-in-swift-part-1/): A great 18 part series written by Dave DeLong.
