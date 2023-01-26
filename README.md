@@ -31,7 +31,7 @@ final class BlogAPI: APIClient {
   init(requestLoader: HTTPRequestLoader) {
     self.requestLoader = requestLoader
     self.baseURL = { URL(string: "https://api.myblog.com")! }
-    self.defaultHeaders = HTTPHeaders(["Content-type": "application/json; charset=UTF-8"])
+    self.defaultHeaders = { HTTPHeaders(["Content-type": "application/json; charset=UTF-8"]) }
   }
 }
 ```
