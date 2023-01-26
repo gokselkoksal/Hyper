@@ -1,4 +1,4 @@
-#  Request Loader Chain
+#  Request Loader Chain ⛓️
 
 Multiple `HTTPRequestLoader`s can be combined to act as a single request loader for an API.
 

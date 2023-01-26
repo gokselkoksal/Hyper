@@ -1,4 +1,4 @@
-#  Response Scheduling
+#  Response Scheduling ⏰
 
 `StubbedRequestLoader` can be configured to schedule responses with delay.
 

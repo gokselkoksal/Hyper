@@ -1,4 +1,4 @@
-# Verifying Request Construction
+# Verifying Request Construction 🧪
 
 Each endpoint on an API can be designed in two ways. First and the most obvious option is having something like below.
 
