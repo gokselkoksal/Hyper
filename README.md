@@ -97,7 +97,7 @@ XCTAssertEqual(blogPost.body, "Fake post body")
 ## Core Features
 * [Verifying Request Construction](Docs/VerifyingRequestConstruction.md): Using `HTTPTask` abstraction, it's easy to verify underlying `URLRequest` for each endpoint without hitting the live network.
 * [Response Scheduling](Docs/ResponseScheduling.md): Stub responses can be served with delay to mimic a real network. 
-* [Request Loader Chain]: Allows you to use multiple loaders to handle a group of requests differently.
+* [Request Loader Chain](Docs/RequestLoaderChain.md): Allows you to use multiple loaders to handle a group of requests differently.
 
 ## Inspiration
 * [HTTP in Swift](https://davedelong.com/blog/2020/06/27/http-in-swift-part-1/): A great 18 part series written by Dave DeLong.
