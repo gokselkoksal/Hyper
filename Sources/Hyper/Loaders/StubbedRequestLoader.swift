@@ -14,6 +14,8 @@ public final class StubbedRequestLoader: HTTPRequestLoader {
     
     public struct Configuration {
         
+        public static let `default` = Configuration()
+        
         /// True if stub provider is enabled.
         public var isEnabled: Bool
         

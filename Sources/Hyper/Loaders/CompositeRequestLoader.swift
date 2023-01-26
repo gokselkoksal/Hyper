@@ -27,7 +27,7 @@ private final class CompositeRequestLoader: HTTPRequestLoader {
     }
     
     func canRespond(to request: DataRequest) -> Bool {
-        return true // at least one of the loaders in a loader chain should handle the request.
+        loaders.first(where: { $0.canRespond(to: request) }) != nil
     }
     
     func load(_ request: DataRequest) async -> DataResponse<Data, Error> {
